@@ -1366,9 +1366,6 @@ footer {
 
 /* Салати в плані харчування */
 
-.meal-slot.salad {
-  border-left: 3px solid #a6b77b;
-}
 
 .legend-dot.salad {
   background: #a6b77b;
@@ -1530,3 +1527,54 @@ footer {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Кнопка рецепта в недельном плане */
+.planned-recipe-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  width: 100%;
+  margin-top: 8px;
+  padding: 9px 12px;
+
+  border: 1px solid #e2dfd2;
+  border-radius: 12px;
+
+  background: #faf9f4;
+  color: #58664b;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.planned-recipe-btn:hover {
+  background: #eaf0e2;
+  border-color: #bdcdae;
+  color: #3e5734;
+  transform: translateY(-1px);
+}
+
+.planned-recipe-btn:active {
+  transform: translateY(0);
+}
+
+.planned-recipe-btn:focus-visible {
+  outline: 3px solid rgba(120, 151, 99, 0.3);
+  outline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+  .planned-recipe-btn {
+    padding: 10px;
+    font-size: 13px;
+  }
+}
+
+
