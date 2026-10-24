@@ -1362,3 +1362,171 @@ footer {
     text-align: center;
   }
 }
+
+
+/* Салати в плані харчування */
+
+.meal-slot.salad {
+  border-left: 3px solid #a6b77b;
+}
+
+.legend-dot.salad {
+  background: #a6b77b;
+}
+
+/* Спливаюче вікно вибору страв */
+
+.picker-dialog {
+  position: fixed;
+  inset: 0;
+  width: min(680px, calc(100% - 28px));
+  max-width: none;
+  max-height: 82vh;
+  margin: auto;
+  padding: 30px;
+  border: 1px solid #e8e0d5;
+  border-radius: 24px;
+  background: #fffdf9;
+  color: #39382f;
+  box-shadow: 0 24px 90px rgb(45 38 26 / 20%);
+  overflow-y: auto;
+}
+
+.picker-dialog[open] {
+  display: block;
+}
+
+.picker-dialog::backdrop {
+  background: rgb(35 32 26 / 48%);
+  backdrop-filter: blur(4px);
+}
+
+.picker-header {
+  padding-right: 28px;
+}
+
+.picker-header h2 {
+  margin: 8px 0;
+}
+
+.picker-header .muted {
+  color: #858174;
+}
+
+.picker-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 24px;
+  padding: 0 15px;
+  border: 1px solid #e9e3d8;
+  border-radius: 13px;
+  background: #f8f5ef;
+}
+
+.picker-search input {
+  width: 100%;
+  min-width: 0;
+  padding: 14px 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.picker-results {
+  margin: 18px 0 12px;
+  color: #858174;
+  font-size: 13px;
+}
+
+.picker-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.picker-dish {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid #eee8de;
+  border-radius: 15px;
+  background: #fff;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.picker-dish:hover {
+  border-color: #b4bd91;
+  background: #f7f8f0;
+}
+
+.picker-dish-emoji {
+  display: grid;
+  flex: 0 0 43px;
+  width: 43px;
+  height: 43px;
+  place-items: center;
+  border-radius: 12px;
+  background: #f3eee5;
+  font-size: 25px;
+}
+
+.picker-dish-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.picker-dish-info strong {
+  overflow-wrap: anywhere;
+  font-size: 14px;
+}
+
+.picker-dish-info small {
+  color: #858174;
+  font-size: 12px;
+}
+
+.picker-dish-arrow {
+  color: #78885a;
+  font-size: 21px;
+}
+
+.picker-empty {
+  grid-column: 1 / -1;
+  padding: 35px 15px;
+  border: 1px dashed #ddd5c8;
+  border-radius: 16px;
+  text-align: center;
+}
+
+.picker-empty > span {
+  color: #a6b77b;
+  font-size: 35px;
+}
+
+.picker-empty small {
+  color: #858174;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 540px) {
+  .picker-dialog {
+    width: calc(100% - 20px);
+    max-height: 88vh;
+    padding: 22px 16px;
+    border-radius: 19px;
+  }
+
+  .picker-grid {
+    grid-template-columns: 1fr;
+  }
+}
