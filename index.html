@@ -13,7 +13,10 @@
   <header class="topbar">
     <a class="brand" href="#" aria-label="Тепле меню — головна">
       <span class="brand-mark">✳</span>
-      <span><strong>тепле меню</strong><small>що приготувати сьогодні?</small></span>
+      <span>
+        <strong>тепле меню</strong>
+        <small>що приготувати сьогодні?</small>
+      </span>
     </a>
 
     <nav class="main-nav" aria-label="Основна навігація">
@@ -29,12 +32,18 @@
   <main>
     <section class="hero" id="hero">
       <div class="hero-copy">
-        <p class="eyebrow"><span class="dot"></span> МАЛЕНЬКИЙ ПЛАН НА ВЕЛИКИЙ ТИЖДЕНЬ</p>
+        <p class="eyebrow">
+          <span class="dot"></span>
+          МАЛЕНЬКИЙ ПЛАН НА ВЕЛИКИЙ ТИЖДЕНЬ
+        </p>
+
         <h1>Їжа, про яку<br><em>не потрібно думати.</em></h1>
+
         <p class="hero-description">
           Зберігай улюблені рецепти, знаходь ідеї та складай меню
           на тиждень — спокійно й без метушні.
         </p>
+
         <button class="primary-btn" id="startPlanning">
           Скласти меню <span>↗</span>
         </button>
@@ -58,37 +67,52 @@
         <div>
           <p class="eyebrow">ТВОЯ КОЛЕКЦІЯ</p>
           <h2>Що сьогодні готуємо?</h2>
-          <p class="muted">Обирай страву або додавай її до плану харчування.</p>
+          <p class="muted">
+            Обирай страву або додавай її до плану харчування.
+          </p>
         </div>
 
         <div class="search-wrap">
           <span>⌕</span>
-          <input id="searchInput" type="search"
-                 placeholder="Знайти страву..."
-                 aria-label="Пошук страв">
+          <input
+            id="searchInput"
+            type="search"
+            placeholder="Знайти страву..."
+            aria-label="Пошук страв">
         </div>
       </div>
 
-      <div class="category-tabs" role="tablist" aria-label="Категорії страв">
+      <div
+        class="category-tabs"
+        role="tablist"
+        aria-label="Категорії страв">
+
         <button class="category-tab active" data-category="all">
           Усі страви <span id="allCount">0</span>
         </button>
+
         <button class="category-tab" data-category="breakfast">
           ☀ Сніданки <span data-count="breakfast">0</span>
         </button>
+
         <button class="category-tab" data-category="lunch">
           ◒ Обіди <span data-count="lunch">0</span>
         </button>
+
         <button class="category-tab" data-category="dinner">
           ☾ Вечері <span data-count="dinner">0</span>
         </button>
+
         <button class="category-tab" data-category="salad">
           ✿ Салати <span data-count="salad">0</span>
         </button>
       </div>
 
       <div class="menu-meta">
-        <span id="resultsLabel">Поки тут вільне місце для твоїх рецептів</span>
+        <span id="resultsLabel">
+          Поки тут вільне місце для твоїх рецептів
+        </span>
+
         <label class="sort-control">
           Сортування
           <select id="sortSelect">
@@ -104,11 +128,15 @@
         <div class="empty-illustration">
           <span>♡</span><i></i><b></b>
         </div>
+
         <h3>Почнімо з чистого аркуша</h3>
+
         <p>
-          Тут з'являться картки страв із файлу <code>dishes.json</code>.<br>
+          Тут з'являться картки страв із файлу
+          <code>dishes.json</code>.<br>
           Поки що можна переглянути приклад наповнення в четвертому файлі.
         </p>
+
         <button class="secondary-btn" id="showDataHelp">
           Як додати власні страви?
         </button>
@@ -120,26 +148,54 @@
         <div>
           <p class="eyebrow">ТВІЙ РИТМ · ТВОЇ ПРАВИЛА</p>
           <h2>План харчування</h2>
-          <p class="muted">Додавай страви до днів тижня та плануй наперед.</p>
+          <p class="muted">
+            Додавай страви до днів тижня та плануй наперед.
+          </p>
         </div>
 
         <div class="week-controls">
-          <button class="icon-btn" id="prevWeek" aria-label="Попередній тиждень">←</button>
+          <button
+            class="icon-btn"
+            id="prevWeek"
+            aria-label="Попередній тиждень">←</button>
+
           <div>
             <strong id="weekLabel">Цей тиждень</strong>
             <small id="weekDates"></small>
           </div>
-          <button class="icon-btn" id="nextWeek" aria-label="Наступний тиждень">→</button>
+
+          <button
+            class="icon-btn"
+            id="nextWeek"
+            aria-label="Наступний тиждень">→</button>
+
           <button class="text-btn" id="thisWeek">Сьогодні</button>
         </div>
       </div>
 
       <div class="planner-toolbar">
         <div class="meal-legend">
-          <span><i class="legend-dot breakfast"></i>Сніданок</span>
-          <span><i class="legend-dot lunch"></i>Обід</span>
-          <span><i class="legend-dot dinner"></i>Вечеря</span>
+          <span>
+            <i class="legend-dot breakfast"></i>
+            Сніданок
+          </span>
+
+          <span>
+            <i class="legend-dot lunch"></i>
+            Обід
+          </span>
+
+          <span>
+            <i class="legend-dot dinner"></i>
+            Вечеря
+          </span>
+
+          <span>
+            <i class="legend-dot salad"></i>
+            Салати
+          </span>
         </div>
+
         <button class="secondary-btn compact" id="clearWeek">
           Очистити цей тиждень
         </button>
@@ -163,29 +219,87 @@
       <span class="brand-mark">✳</span>
       <strong>тепле меню</strong>
     </a>
+
     <span>Домашня колекція рецептів · створено з турботою</span>
   </footer>
 
+  <!-- Вікно рецепта -->
+
   <dialog id="recipeDialog" class="recipe-dialog">
-    <button class="dialog-close" id="closeRecipe" aria-label="Закрити">×</button>
+    <button
+      class="dialog-close"
+      id="closeRecipe"
+      aria-label="Закрити">×</button>
+
     <div id="recipeContent"></div>
   </dialog>
 
+  <!-- Вікно допомоги -->
+
   <dialog id="helpDialog" class="help-dialog">
-    <button class="dialog-close" id="closeHelp" aria-label="Закрити">×</button>
+    <button
+      class="dialog-close"
+      id="closeHelp"
+      aria-label="Закрити">×</button>
+
     <p class="eyebrow">ЯК ЦЕ ПРАЦЮЄ</p>
     <h2>Додати власні страви</h2>
+
     <ol>
-      <li>Розмісти файл <code>dishes.json</code> поруч з іншими файлами сайту.</li>
-      <li>Скопіюй структуру з <code>dishes.example.json</code> і заміни приклади власними стравами.</li>
-      <li>Вкажи категорію: <code>breakfast</code>, <code>lunch</code>, <code>dinner</code> або <code>salad</code>.</li>
-      <li>Відкрий сайт через локальний сервер, наприклад розширення Live Server у VS Code.</li>
+      <li>
+        Розмісти файл <code>dishes.json</code> поруч з іншими файлами сайту.
+      </li>
+      <li>
+        Скопіюй структуру з <code>dishes.example.json</code>
+        і заміни приклади власними стравами.
+      </li>
+      <li>
+        Вкажи категорію:
+        <code>breakfast</code>,
+        <code>lunch</code>,
+        <code>dinner</code>
+        або <code>salad</code>.
+      </li>
+      <li>
+        Відкрий сайт через локальний сервер, наприклад
+        розширення Live Server у VS Code.
+      </li>
     </ol>
+
     <p class="help-note">
       План харчування зберігається в цьому браузері на цьому пристрої.
       Щоб перенести його на інший пристрій, потрібно окремо перенести
       дані браузера або додати серверне зберігання.
     </p>
+  </dialog>
+
+  <!-- Нове спливаюче вікно вибору страви -->
+
+  <dialog id="pickerDialog" class="picker-dialog">
+    <button
+      class="dialog-close"
+      id="closePicker"
+      aria-label="Закрити">×</button>
+
+    <div class="picker-header">
+      <p class="eyebrow">ТВІЙ ПЛАН ХАРЧУВАННЯ</p>
+      <h2 id="pickerTitle">Обери страву</h2>
+      <p class="muted" id="pickerDate"></p>
+    </div>
+
+    <div class="picker-search">
+      <span>⌕</span>
+
+      <input
+        id="pickerSearch"
+        type="search"
+        placeholder="Знайти страву..."
+        aria-label="Пошук страв у вибраній категорії">
+    </div>
+
+    <p class="picker-results" id="pickerResults"></p>
+
+    <div class="picker-grid" id="pickerGrid"></div>
   </dialog>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
