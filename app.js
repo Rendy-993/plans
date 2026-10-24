@@ -23,7 +23,8 @@ const CATEGORY_CLASS = {
 const MEAL_SLOTS = [
   { key: "breakfast", label: "Сніданок" },
   { key: "lunch", label: "Обід" },
-  { key: "dinner", label: "Вечеря" }
+  { key: "dinner", label: "Вечеря" },
+  { key: "salad", label: "Салати" }
 ];
 
 let dishes = [];
@@ -31,6 +32,7 @@ let activeCategory = "all";
 let searchTerm = "";
 let currentWeekOffset = 0;
 let toastTimer = null;
+let pickerTarget = null;
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -38,6 +40,7 @@ const dishGrid = $("#dishGrid");
 const emptyState = $("#emptyState");
 const recipeDialog = $("#recipeDialog");
 const helpDialog = $("#helpDialog");
+const pickerDialog = $("#pickerDialog");
 
 function escapeHTML(value = "") {
   return String(value).replace(/[&<>"']/g, char => ({
@@ -309,49 +312,50 @@ function renderPlanner() {
 
     const slots = MEAL_SLOTS.map(slot => {
       const planned = plan[key]?.[slot.key];
-      const dish = planned ? getDish(planned) : null;
-
-      if (dish) {
-        return `
-          <div class="meal-slot ${slot.key}">
-            <span class="slot-label">${slot.label}</span>
-
-            <div class="planned-dish">
-              ${escapeHTML(dish.emoji || "🍽️")}
-              ${escapeHTML(dish.name)}
-            </div>
-
-            <button
-              class="remove-planned"
-              data-remove="${key}"
-              data-slot="${slot.key}"
-              aria-label="Прибрати страву">
-              ×
-            </button>
-
-            <button
-              class="slot-add"
-              data-pick="${key}"
-              data-slot="${slot.key}"
-              aria-label="Замінити страву">
-              ↻
-            </button>
-          </div>
-        `;
-      }
+      const dish = planned != null ? getDish(planned) : null;
 
       return `
         <div class="meal-slot ${slot.key}">
-          <span class="slot-label">${slot.label}</span>
-          <span class="slot-empty">Поки порожньо</span>
+          <span class="slot-label">
+            ${CATEGORY_EMOJI[slot.key]} ${slot.label}
+          </span>
 
-          <button
-            class="slot-add"
-            data-pick="${key}"
-            data-slot="${slot.key}"
-            aria-label="Додати страву">
-            ＋
-          </button>
+          ${
+            dish
+              ? `
+                <div class="planned-dish">
+                  ${escapeHTML(dish.emoji || "🍽️")}
+                  ${escapeHTML(dish.name)}
+                </div>
+
+                <button
+                  class="remove-planned"
+                  data-remove="${key}"
+                  data-slot="${slot.key}"
+                  aria-label="Прибрати страву">
+                  ×
+                </button>
+
+                <button
+                  class="slot-add"
+                  data-pick="${key}"
+                  data-slot="${slot.key}"
+                  aria-label="Замінити страву">
+                  ↻
+                </button>
+              `
+              : `
+                <span class="slot-empty">Поки порожньо</span>
+
+                <button
+                  class="slot-add"
+                  data-pick="${key}"
+                  data-slot="${slot.key}"
+                  aria-label="Додати страву">
+                  ＋
+                </button>
+              `
+          }
         </div>
       `;
     }).join("");
@@ -398,9 +402,15 @@ function addDishToPlan(dishId, date, slot) {
 
   if (!dish) return;
 
+  // Страва повинна відповідати категорії вибраного слота.
+  if (slot && dish.category !== slot) {
+    showToast("Страва не відповідає вибраній категорії");
+    return;
+  }
+
   const chosenSlot = slot ||
     (
-      ["breakfast", "lunch", "dinner"].includes(dish.category)
+      CATEGORY_LABELS[dish.category]
         ? dish.category
         : "lunch"
     );
@@ -486,6 +496,108 @@ function openRecipe(dishId) {
   recipeDialog.showModal();
 }
 
+/* Вибір страви через спливаюче вікно */
+
+function openPicker(date, slot) {
+  if (!CATEGORY_LABELS[slot]) return;
+
+  pickerTarget = {
+    date,
+    slot,
+    category: slot
+  };
+
+  $("#pickerTitle").textContent = CATEGORY_LABELS[slot];
+
+  $("#pickerDate").textContent =
+    `Оберіть страву на ${formatDate(
+      new Date(date + "T12:00:00")
+    )}`;
+
+  $("#pickerSearch").value = "";
+
+  renderPickerDishes();
+
+  pickerDialog.showModal();
+}
+
+function renderPickerDishes() {
+  if (!pickerTarget) return;
+
+  const { category } = pickerTarget;
+
+  const query = $("#pickerSearch").value
+    .trim()
+    .toLocaleLowerCase("uk");
+
+  const filtered = dishes
+    .filter(dish => {
+      // У вікні відображається тільки обрана категорія.
+      if (dish.category !== category) return false;
+
+      const haystack = [
+        dish.name,
+        dish.description,
+        ...safeArray(dish.tags),
+        ...safeArray(dish.ingredients)
+      ].join(" ").toLocaleLowerCase("uk");
+
+      return haystack.includes(query);
+    })
+    .sort((a, b) => a.name.localeCompare(b.name, "uk"));
+
+  $("#pickerResults").textContent =
+    `Знайдено страв: ${filtered.length}`;
+
+  $("#pickerGrid").innerHTML = filtered.length
+    ? filtered.map(dish => `
+        <button
+          type="button"
+          class="picker-dish"
+          data-picker-select="${escapeHTML(dish.id)}">
+
+          <span class="picker-dish-emoji">
+            ${escapeHTML(dish.emoji || "🍽️")}
+          </span>
+
+          <span class="picker-dish-info">
+            <strong>${escapeHTML(dish.name)}</strong>
+            <small>◷ ${Number(dish.time) || "—"} хв</small>
+          </span>
+
+          <span class="picker-dish-arrow">＋</span>
+        </button>
+      `).join("")
+    : `
+      <div class="picker-empty">
+        <span>♡</span>
+        <p>У цій категорії поки немає страв.</p>
+        <small>
+          Додай страви з категорією
+          <code>${escapeHTML(category)}</code> до dishes.json.
+        </small>
+      </div>
+    `;
+}
+
+function selectPickerDish(dishId) {
+  if (!pickerTarget) return;
+
+  const dish = getDish(dishId);
+
+  if (!dish || dish.category !== pickerTarget.category) {
+    showToast("Ця страва не належить до вибраної категорії");
+    return;
+  }
+
+  const { date, slot } = pickerTarget;
+
+  pickerTarget = null;
+  pickerDialog.close();
+
+  addDishToPlan(dish.id, date, slot);
+}
+
 /* Сповіщення */
 
 function showToast(message) {
@@ -527,38 +639,6 @@ function switchView(view) {
   });
 }
 
-/* Вибір страви для конкретної комірки календаря */
-
-function openPicker(date, slot) {
-  switchView("menu");
-
-  const category =
-    ["breakfast", "lunch", "dinner"].includes(slot)
-      ? slot
-      : "all";
-
-  activeCategory = category;
-
-  document.querySelectorAll(".category-tab").forEach(button => {
-    button.classList.toggle(
-      "active",
-      button.dataset.category === category
-    );
-  });
-
-  renderDishes();
-
-  showToast(
-    `Обери страву на ${formatDate(
-      new Date(date + "T12:00:00")
-    )}. Натисни «До плану»`
-  );
-
-  window.mealPlanTarget = { date, slot };
-
-  $("#searchInput").focus({ preventScroll: true });
-}
-
 /* Обробники кнопок */
 
 document.addEventListener("click", event => {
@@ -586,21 +666,19 @@ document.addEventListener("click", event => {
   const addButton = event.target.closest("[data-add]");
 
   if (addButton) {
-    const target = window.mealPlanTarget;
     const dish = getDish(addButton.dataset.add);
 
-    const defaultSlot =
-      dish && ["breakfast", "lunch", "dinner"].includes(dish.category)
+    if (dish) {
+      // Кнопка каталогу додає страву до відповідного слота
+      // поточного тижня, не відкриваючи іншу сторінку.
+      const slot = CATEGORY_LABELS[dish.category]
         ? dish.category
         : "lunch";
 
-    addDishToPlan(
-      addButton.dataset.add,
-      target?.date || dateKey(startOfWeek(currentWeekOffset)),
-      target?.slot || defaultSlot
-    );
+      const date = dateKey(startOfWeek(currentWeekOffset));
 
-    window.mealPlanTarget = null;
+      addDishToPlan(dish.id, date, slot);
+    }
   }
 
   const removeButton = event.target.closest("[data-remove]");
@@ -632,24 +710,30 @@ document.addEventListener("click", event => {
     );
   }
 
+  const pickerSelectButton =
+    event.target.closest("[data-picker-select]");
+
+  if (pickerSelectButton) {
+    selectPickerDish(pickerSelectButton.dataset.pickerSelect);
+  }
+
   const recipeAdd = event.target.closest("[data-recipe-add]");
 
   if (recipeAdd) {
-    const dish = getDish(recipeAdd.dataset.recipe);
-    const target = window.mealPlanTarget;
+    const dish = getDish(recipeAdd.dataset.recipe-add);
 
-    const defaultSlot =
-      dish && ["breakfast", "lunch", "dinner"].includes(dish.category)
+    if (dish) {
+      const slot = CATEGORY_LABELS[dish.category]
         ? dish.category
         : "lunch";
 
-    addDishToPlan(
-      recipeAdd.dataset.recipe,
-      target?.date || dateKey(startOfWeek(currentWeekOffset)),
-      target?.slot || defaultSlot
-    );
+      addDishToPlan(
+        dish.id,
+        dateKey(startOfWeek(currentWeekOffset)),
+        slot
+      );
+    }
 
-    window.mealPlanTarget = null;
     recipeDialog.close();
   }
 });
@@ -670,7 +754,7 @@ $("#startPlanning").addEventListener("click", () => {
   switchView("planner");
 });
 
-/* Пошук і сортування */
+/* Пошук і сортування каталогу */
 
 $("#searchInput").addEventListener("input", event => {
   searchTerm = event.target.value.trim();
@@ -678,6 +762,24 @@ $("#searchInput").addEventListener("input", event => {
 });
 
 $("#sortSelect").addEventListener("change", renderDishes);
+
+/* Пошук усередині вікна вибору */
+
+$("#pickerSearch").addEventListener("input", renderPickerDishes);
+
+/* Закриття вікна вибору */
+
+$("#closePicker").addEventListener("click", () => {
+  pickerTarget = null;
+  pickerDialog.close();
+});
+
+pickerDialog.addEventListener("click", event => {
+  if (event.target === pickerDialog) {
+    pickerTarget = null;
+    pickerDialog.close();
+  }
+});
 
 /* Перемикання тижнів */
 
@@ -718,7 +820,7 @@ $("#clearWeek").addEventListener("click", () => {
   showToast("План на тиждень очищено");
 });
 
-/* Закриття вікон */
+/* Закриття інших вікон */
 
 $("#closeRecipe").addEventListener("click", () => {
   recipeDialog.close();
@@ -732,9 +834,13 @@ $("#showDataHelp").addEventListener("click", () => {
   helpDialog.showModal();
 });
 
-[recipeDialog, helpDialog].forEach(dialog => {
+[recipeDialog, helpDialog, pickerDialog].forEach(dialog => {
   dialog.addEventListener("click", event => {
     if (event.target === dialog) {
+      if (dialog === pickerDialog) {
+        pickerTarget = null;
+      }
+
       dialog.close();
     }
   });
